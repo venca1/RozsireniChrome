@@ -1,0 +1,19 @@
+{
+    "manifest_version": 3,
+    "name": "Monaco Editor Height Toggler",
+    "version": "1.0",
+    "description": "Přepíná výšku elementu .monaco-editor kliknutím na ikonu rozšíření.",
+    "permissions": ["activeTab", "scripting"],
+    "background": {
+        "service_worker": "service_worker.js"
+    },
+    "action": {
+        "default_title": "Přepnout výšku editoru"
+        // Sekci s ikonami můžete vrátit, nebo ji vynechat (viz předchozí odpověď)
+    },
+    "icons": {
+        "16": "icon16.png",
+        "48": "icon48.png",
+        "128": "icon128.png"
+    }
+}
