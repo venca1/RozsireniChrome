@@ -5,65 +5,95 @@ const DEFAULT_ACTION = 'test1';
 
 
 function executePosli(newHeight) {
-    // Vše, co je uvnitř této funkce, se spustí na cílové stránce
-    const element = document.querySelector('.monaco-editor');
+    const elementsNodeList = document.querySelectorAll('.view-line');
+    const sortedElements = Array.from(elementsNodeList).sort((a, b) => {
+        //funkce seřadí řádky dle top
+        const topA = a.style.top;
+        const topValueA = parseFloat(topA);
+        const topB = b.style.top;
+        const topValueB = parseFloat(topB);
+        return topValueA - topValueB;
+    });
 
+    var text = [];
+    for (var i in sortedElements) {
+        text.push(sortedElements[i].innerText);
+    }
+    const obsah = text.join("\n");
+    const urlProPOST = 'https://www.parsermat.cz/vencovaPostWebAppRozsireni.php';
+    const aktualniUrl = window.location.href;
+    const nazev = document.querySelector('.form-control').value; // Získání nového elementu
 
+    console.log({
+        obsah: obsah,
+        aktualniUrl: aktualniUrl,
+        nazev: nazev
+    });
 
-    var height= element.style.height;
-
-
-    console.log({info:"r16",func:"executePosli",height:height/*,vyska:element?element.style.height:null*/});
-
-
-
-    if (element) {
-       // element.style.height = newHeight;
-        console.log(`Script Tabidoo: Výška elementu .monaco-editor nastavena na ${newHeight}.`);
-
-        if(height== '924px'){
-            element.style.height = '324px';
-
-        }else{
-            element.style.height = '924px';
-        }
-
-
-
+    // 3. Spuštění POST požadavku, pokud není text prázdný
+    if (obsah.trim() !== "") {
+        fetch(urlProPOST, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    zdroj: 'Chrome rozšíření - Tabidoo',
+                    obsah: obsah,
+                    nazev: nazev,
+                    url_stranky: aktualniUrl
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Chyba sítě: ${response.statusText} (Status: ${response.status})`);
+                }
+                // Vracíme odpověď jako text, pokud by JSON selhal.
+                return response.text().then(text => {
+                    try {
+                        return JSON.parse(text); // Zkusí parsovat jako JSON, pokud to je JSON
+                    } catch {
+                        return {
+                            status: 'ok',
+                            zprava: 'Odesláno, server vrátil textovou odpověď',
+                            odpoved: text
+                        }; // Jinak vrátí text v objektu
+                    }
+                });
+            })
+            .then(data => {
+                console.log('Script Tabidoo: Data byla úspěšně odeslána!', data);
+            })
+            .catch(error => {
+                console.error('Script Tabidoo: Došlo k chybě při odesílání dat POST metodou:', error);
+            });
     } else {
-        console.warn('Script Tabidoo: Element s třídou .monaco-editor nebyl nalezen.');
+        console.warn('Script Tabidoo: Text k odeslání je prázdný, POST požadavek nebyl spuštěn.');
     }
 }
 
 
-
-// Funkce, která provede akci "script Tabidoo"
-// TATO funkce BUDE INJEKTOVÁNA A SPUŠTĚNA NA CÍLOVÉ STRÁNCE.
 function executeTabidooScript(newHeight) {
     // Vše, co je uvnitř této funkce, se spustí na cílové stránce
     const element = document.querySelector('.monaco-editor');
 
+    var height = element.style.height;
 
-
-    var height= element.style.height;
-
-
-    console.log({info:"r51",height:height/*,vyska:element?element.style.height:null*/});
-
-
+    console.log({
+        info: "r51",
+        height: height /*,vyska:element?element.style.height:null*/
+    });
 
     if (element) {
-       // element.style.height = newHeight;
+        // element.style.height = newHeight;
         console.log(`Script Tabidoo: Výška elementu .monaco-editor nastavena na ${newHeight}.`);
 
-        if(height== '924px'){
+        if (height == '924px') {
             element.style.height = '324px';
 
-        }else{
+        } else {
             element.style.height = '924px';
         }
-
-
 
     } else {
         console.warn('Script Tabidoo: Element s třídou .monaco-editor nebyl nalezen.');
@@ -101,14 +131,20 @@ function createContextMenu() {
         chrome.storage.local.get([ACTION_KEY], (result) => {
             const selectedAction = result[ACTION_KEY] || DEFAULT_ACTION;
             const selectedId = 'select_' + selectedAction;
-            
+
             // Kontrola existence id a zaškrtnutí
             if (selectedAction === 'Tabidoo') {
-                chrome.contextMenus.update('select_Tabidoo', { checked: true });
+                chrome.contextMenus.update('select_Tabidoo', {
+                    checked: true
+                });
             } else if (selectedAction === 'Posli') {
-                chrome.contextMenus.update('select_Posli', { checked: true });
+                chrome.contextMenus.update('select_Posli', {
+                    checked: true
+                });
             } else {
-                chrome.contextMenus.update('select_test1', { checked: true });
+                chrome.contextMenus.update('select_test1', {
+                    checked: true
+                });
             }
         });
     });
@@ -118,7 +154,9 @@ function createContextMenu() {
 chrome.runtime.onInstalled.addListener(() => {
     chrome.storage.local.get([ACTION_KEY], (result) => {
         if (!result[ACTION_KEY]) {
-            chrome.storage.local.set({ [ACTION_KEY]: DEFAULT_ACTION });
+            chrome.storage.local.set({
+                [ACTION_KEY]: DEFAULT_ACTION
+            });
         }
         createContextMenu();
     });
@@ -128,9 +166,11 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.contextMenus.onClicked.addListener((info) => {
     if (info.menuItemId.startsWith('select_')) {
         const newAction = info.menuItemId.replace('select_', '');
-        
+
         // Uložení nové vybrané akce
-        chrome.storage.local.set({ [ACTION_KEY]: newAction });
+        chrome.storage.local.set({
+            [ACTION_KEY]: newAction
+        });
     }
 });
 
@@ -138,31 +178,35 @@ chrome.contextMenus.onClicked.addListener((info) => {
 chrome.action.onClicked.addListener((tab) => {
     chrome.storage.local.get([ACTION_KEY], (result) => {
         const currentAction = result[ACTION_KEY] || DEFAULT_ACTION;
-        
+
         // Logika pro "script Tabidoo"
         if (currentAction === 'Tabidoo') {
 
             // Spustí funkci executeTabidooScript na aktivní záložce
             chrome.scripting.executeScript({
-                target: { tabId: tab.id },
+                target: {
+                    tabId: tab.id
+                },
                 func: executeTabidooScript, // Předáme funkci
                 args: ['924px'] // Předáme argument
             });
             console.log('Spouštění "script Tabidoo" na aktivní záložce.');
-            return; 
+            return;
         }
 
 
-                if (currentAction === 'Posli') {
+        if (currentAction === 'Posli') {
 
             // Spustí funkci executeTabidooScript na aktivní záložce
             chrome.scripting.executeScript({
-                target: { tabId: tab.id },
+                target: {
+                    tabId: tab.id
+                },
                 func: executePosli, // Předáme funkci
                 args: ['924px'] // Předáme argument
             });
             console.log('Spouštění "script Posli" na aktivní záložce.');
-            return; 
+            return;
         }
 
 
