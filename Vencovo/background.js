@@ -5,49 +5,90 @@ const DEFAULT_ACTION = 'test1';
 //////////
 function executeTest(newHeight) {
 
-    function createDivsJson() {
-        // 1. Získáme všechny divy na stránce
-        const allDivs = document.body.querySelectorAll('div');
-        const result = [];
+function processElement(parentElement) {
+    const isForm = parentElement.tagName === 'FORM';
+    
+    const elementObject = {
+        type: parentElement.tagName,
+        id: parentElement.id || null,
+        className: parentElement.className || null,
+        // Přidáme název, pokud se jedná o FORM
+        ...(isForm && { name: parentElement.name || null }), 
+        
+        // Zde budou zploštěné seznamy všech zanořených prvků
+        children: {
+            forms: [],
+            divs: [],
+            inputs: [],
+            textareas: [] 
+        }
+    };
 
-        // 2. Projdeme všechny nalezené divy
-        allDivs.forEach(div => {
-            // Najdeme všechny vnořené inputy v aktuálním divu
-            const nestedInputs = div.querySelectorAll('input');
-
-            // Pokračujeme pouze pokud div obsahuje vnořené inputy
-            if (nestedInputs.length > 0) {
-
-                // Vytvoříme pole pro uložení dat z inputů v aktuálním divu
-                const inputsData = [];
-
-                // Iterujeme přes vnořené inputy a extrahujeme požadované vlastnosti
-                nestedInputs.forEach(input => {
-                    const inputObject = {
-                        name: input.name || null,
-                        id: input.id || null,
-                        value: input.value || null,
-                        type: input.type // Pro kontext přidáme i typ inputu
-                    };
-                    inputsData.push(inputObject);
-                });
-
-                // Sestavíme objekt pro aktuální div
-                const divObject = {
-                    id: div.id || null, // ID divu
-                    className: div.className || null, // Třídy divu
-                    inputs: inputsData // Pole objektů s daty z inputů
-                };
-
-                result.push(divObject);
-            }
+    // 1. Získáme VŠECHNY zanořené DIVy (včetně těch, které jsou vnořeny hlouběji)
+    const nestedDivs = parentElement.querySelectorAll('div');
+    Array.from(nestedDivs).forEach(div => {
+        // Vytvoříme zjednodušený objekt pro vnořený div
+        elementObject.children.divs.push({
+            id: div.id || null,
+            className: div.className || null,
+            // (Pro zjednodušení už nebudeme rekurzivně zpracovávat jejich děti)
         });
+    });
 
-        // 3. Převedeme pole objektů na JSON řetězec
-        return JSON.stringify(result, null, 2);
-    }
+    // 2. Získáme VŠECHNY zanořené FORMy
+    const nestedForms = parentElement.querySelectorAll('form');
+    Array.from(nestedForms).forEach(form => {
+        // Vytvoříme zjednodušený objekt pro vnořený formulář
+        elementObject.children.forms.push({
+            id: form.id || null,
+            name: form.name || null,
+            className: form.className || null,
+        });
+    });
 
-    const obsah = createDivsJson();
+    // 3. Získáme VŠECHNY zanořené INPUTy
+    const nestedInputs = parentElement.querySelectorAll('input');
+    Array.from(nestedInputs).forEach(input => {
+        elementObject.children.inputs.push({
+            name: input.name || null,
+            id: input.id || null,
+            value: input.value || null,
+            type: input.type || 'text'
+        });
+    });
+
+    // 4. Získáme VŠECHNY zanořené TEXTAREY
+    const nestedTextareas = parentElement.querySelectorAll('textarea');
+    Array.from(nestedTextareas).forEach(textarea => {
+        elementObject.children.textareas.push({
+            name: textarea.name || null,
+            id: textarea.id || null,
+            value: textarea.value || null
+        });
+    });
+
+    return elementObject;
+}
+
+function createFlatTreeJson() {
+    const bodyElement = document.body;
+    const result = [];
+
+    // Získáme VŠECHNY přímé děti <body> a zpracujeme POUZE DIV a FORM
+    Array.from(bodyElement.children).forEach(el => {
+        const tagName = el.tagName;
+        
+        if (tagName === 'DIV' || tagName === 'FORM') {
+            // Použijeme jedinou funkci pro DIV i FORM, protože logika je stejná
+            result.push(processElement(el));
+        }
+    });
+
+    // Převedeme pole objektů na JSON řetězec
+    return JSON.stringify(result, null, 2);
+}
+//////
+    const obsah = createFlatTreeJson();
 
     // const obsah = text.join("\n");
     const urlProPOST = 'https://www.parsermat.cz/vencovaPostWebAppRozsireni.php';
