@@ -24,10 +24,28 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 
-    // --- Funkce pro Kliknutí na Tlačítka ---
-    // Získáme všechna tlačítka, kterým chceme přiřadit funkci
+    // --- Akce pro Tlačítko 1 (Spustí Content Script) ---
+    const tlacitko1 = document.getElementById('tlacitko1');
+    if (tlacitko1) {
+        tlacitko1.addEventListener('click', function() {
+            potvrzeniElement.textContent = `Aktivována funkce pro Tlačítko 1: Mění třídu "testclass" na 500px.`;
+
+            // Používáme chrome.scripting.executeScript pro spuštění contentScript.js
+            chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+                const activeTab = tabs[0];
+                
+                chrome.scripting.executeScript({
+                    target: { tabId: activeTab.id },
+                    files: ['contentScript.js'] 
+                })
+                .then(() => console.log("Spuštění content skriptu úspěšné."))
+                .catch(err => console.error("Chyba při spouštění skriptu z popup:", err));
+            });
+        });
+    }
+
+    // --- Akce pro Tlačítko 2, 3, 4 (Pouze potvrdí kliknutí) ---
     const tlacitkaAkce = [
-        document.getElementById('tlacitko1'),
         document.getElementById('tlacitko2'),
         document.getElementById('tlacitko3'),
         document.getElementById('tlacitko4')
@@ -39,8 +57,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Zobrazí potvrzení s českým textem
                 potvrzeniElement.textContent = `Byla provedena akce na: ${this.textContent} (ID: ${this.id})`;
                 console.log(`Kliknuto na tlačítko: ${this.textContent}`);
-                
-                // Zde by normálně proběhla reálná logika (např. chrome.tabs.query atd.)
             });
         }
     });

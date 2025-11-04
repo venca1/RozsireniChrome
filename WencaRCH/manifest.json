@@ -2,7 +2,11 @@
   "manifest_version": 3,
   "name": "Moje Jednoduché Rozšíření",
   "version": "1.0",
-  "description": "Rozšíření se záložkami a tlačítky.",
+  "description": "Rozšíření se záložkami a tlačítky s českými texty.",
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {

@@ -17,13 +17,9 @@ body {
     background-color: #f1f1f1;
 }
 
-.zalozka-tlacitko[data-zalozka="zalozka1"].aktivni {
-    background-color: lightblue;
-    font-weight: bold;
-}
-
-.zalozka-tlacitko[data-zalozka="zalozka2"].aktivni {
-    background-color: lightcoral;
+.zalozka-tlacitko.aktivni {
+    /* Změna barvy pro aktivní záložku */
+    background-color: #ddd; 
     font-weight: bold;
 }
 
@@ -31,7 +27,7 @@ body {
     display: none;
     border: 1px solid #ccc;
     padding: 10px;
-    margin-top: -1px; /* Spojí se s tlačítky záložek */
+    margin-top: -1px; 
 }
 
 .zalozka-obsah.aktivni {
