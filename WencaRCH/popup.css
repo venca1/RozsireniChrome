@@ -1,0 +1,51 @@
+body {
+    width: 250px;
+    font-family: Arial, sans-serif;
+    padding: 10px;
+}
+
+.zalozky {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.zalozka-tlacitko {
+    flex-grow: 1;
+    padding: 8px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+.zalozka-tlacitko[data-zalozka="zalozka1"].aktivni {
+    background-color: lightblue;
+    font-weight: bold;
+}
+
+.zalozka-tlacitko[data-zalozka="zalozka2"].aktivni {
+    background-color: lightcoral;
+    font-weight: bold;
+}
+
+.zalozka-obsah {
+    display: none;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-top: -1px; /* Spojí se s tlačítky záložek */
+}
+
+.zalozka-obsah.aktivni {
+    display: block;
+}
+
+button {
+    margin: 5px;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+#potvrzeni {
+    margin-top: 15px;
+    font-weight: bold;
+    color: green;
+}

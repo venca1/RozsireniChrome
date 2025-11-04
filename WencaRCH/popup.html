@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Rozšíření</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+
+    <div class="zalozky">
+        <button class="zalozka-tlacitko" data-zalozka="zalozka1">Záložka 1</button>
+        <button class="zalozka-tlacitko" data-zalozka="zalozka2">Záložka 2</button>
+    </div>
+
+    <div id="zalozka1" class="zalozka-obsah aktivni">
+        <h3>První sekce</h3>
+        <button id="tlacitko1">Tlačítko 1</button>
+        <button id="tlacitko2">Tlačítko 2</button>
+    </div>
+
+    <div id="zalozka2" class="zalozka-obsah">
+        <h3>Druhá sekce</h3>
+        <button id="tlacitko3">Tlačítko 3</button>
+        <button id="tlacitko4">Tlačítko 4</button>
+    </div>
+
+    <p id="potvrzeni">Zatím nebylo kliknuto.</p>
+
+    <script src="popup.js"></script>
+</body>
+</html>
