@@ -4,8 +4,11 @@
   "version": "1.0",
   "description": "Rozšíření se záložkami a tlačítky s českými texty.",
   "permissions": [
-    "activeTab",
-    "scripting"
+    "storage",
+    "contextMenus",
+    "tabs",
+    "scripting",
+    "activeTab"
   ],
   "action": {
     "default_popup": "popup.html",

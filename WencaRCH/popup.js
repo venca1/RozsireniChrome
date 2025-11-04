@@ -28,25 +28,48 @@ document.addEventListener('DOMContentLoaded', function() {
     const tlacitko1 = document.getElementById('tlacitko1');
     if (tlacitko1) {
         tlacitko1.addEventListener('click', function() {
-            potvrzeniElement.textContent = `Aktivována funkce pro Tlačítko 1: Mění třídu "testclass" na 500px.`;
+            potvrzeniElement.textContent = `Aktivována funkce pro Tlačítko 1: Mění velokost okna.`;
 
-            // Používáme chrome.scripting.executeScript pro spuštění contentScript.js
+            // Používáme chrome.scripting.executeScript pro spuštění zmenaVelikostTabodoo.js
             chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
                 const activeTab = tabs[0];
                 
                 chrome.scripting.executeScript({
                     target: { tabId: activeTab.id },
-                    files: ['contentScript.js'] 
+                    files: ['zmenaVelikostTabodoo.js'] 
                 })
                 .then(() => console.log("Spuštění content skriptu úspěšné."))
                 .catch(err => console.error("Chyba při spouštění skriptu z popup:", err));
             });
         });
     }
+    // --- Akce pro Tlačítko 2 (Spustí Content Script) ---
+    const tlacitko2 = document.getElementById('tlacitko2');
+    if (tlacitko2) {
+        tlacitko2.addEventListener('click', function() {
+          //  potvrzeniElement.textContent = `Aktivována funkce pro Tlačítko 2: Mění vel2.`;
 
-    // --- Akce pro Tlačítko 2, 3, 4 (Pouze potvrdí kliknutí) ---
+            // Používáme chrome.scripting.executeScript pro spuštění zmenaVelikostTabodoo.js
+            chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+                const activeTab = tabs[0];
+                
+               chrome.scripting.executeScript({
+                    target: { tabId: activeTab.id },
+                    files: ['ulozTabodoo.js'] 
+                })
+                .then(() => {console.log("Spuštění Uložení skriptu úspěšné.");
+            potvrzeniElement.innerHTML = "Spuštění Uložení skriptu úspěšné."
+        })
+                .catch(err => {
+                    console.error("Chyba při spouštění skriptu z popup:", err);
+                    potvrzeniElement.innerHTML = "Chyba při Spuštění Uložení!"
+                });
+
+            });
+        });
+    }
+    // --- Akce pro Tlačítko 3, 4 (Pouze potvrdí kliknutí) ---
     const tlacitkaAkce = [
-        document.getElementById('tlacitko2'),
         document.getElementById('tlacitko3'),
         document.getElementById('tlacitko4')
     ];
