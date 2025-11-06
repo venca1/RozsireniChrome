@@ -2,7 +2,7 @@
 // Spouští se v kontextu webové stránky
 (function() {
 
-       const elementsNodeList = document.querySelectorAll('.view-line');
+   /*    const elementsNodeList = document.querySelectorAll('.lines-content');
     const sortedElements = Array.from(elementsNodeList).sort((a, b) => {
         //funkce seřadí řádky dle top
         const topA = a.style.top;
@@ -16,7 +16,17 @@
     for (var i in sortedElements) {
         text.push(sortedElements[i].innerText);
     }
-    const obsah = text.join("\n");
+    const obsah = text.join("\n");*/
+
+const selection = window.getSelection();
+
+//var obsah = selection.toString().trim();
+
+var obsah =  document.querySelector('.lines-content').textContent.trim(); // Získání nového elementu
+
+//const elementsNodeList = document.querySelectorAll('.view-line');
+
+
     const urlProPOST = 'https://www.parsermat.cz/vencovaPostWebAppRozsireni.php';
     const aktualniUrl = window.location.href;
     const nazev = document.querySelector('.form-control').value; // Získání nového elementu

@@ -4,6 +4,16 @@ body {
     padding: 10px;
 }
 
+#inputNameTabidoo,
+#textareaTabidoo {
+    /* Nastaví šířku prvku na 100% rodičovského kontejneru */
+    width: 100%; 
+    
+    /* Box-sizing zajistí, že padding a border nebudou zvětšovat celkovou šířku 
+       přes 100%, což často řeší problémy s přesahy. */
+    box-sizing: border-box; 
+}
+
 .zalozky {
     display: flex;
     margin-bottom: 10px;

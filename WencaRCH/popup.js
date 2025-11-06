@@ -93,6 +93,45 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
+            // --- Akce pro Tlačítko tlacitkoUloz2 (Spustí Content Script) ---
+   
+    const inputElement = document.getElementById('inputNameTabidoo');
+
+    // 1. Získání aktuální aktivní záložky
+    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+        const activeTab = tabs[0];
+        
+        if (activeTab) {
+            // 2. Spuštění content.js a získání výsledku
+            chrome.scripting.executeScript({
+                target: { tabId: activeTab.id },
+                files: ['content.js']
+            }, (results) => {
+                if (results && results[0] && results[0].result) {
+                    const textFromAAA = results[0].result;
+                    
+                    // 3. Vyplnění inputu získaným textem
+                    if (inputElement) {
+                        inputElement.value = textFromAAA;
+                    }
+                } else {
+                    console.log("Nepodařilo se získat data ze stránky nebo element 'aaa' nebyl nalezen.");
+                    // Můžeš zde nastavit placeholder, např.:
+                    if (inputElement) {
+                        inputElement.value = "Data nebyla nalezena";
+
+                     // inputElement.value =  document.querySelector('.form-control').value.trim();// to mi nefunguje
+
+
+                    }
+                }
+            });
+        }
+    });
+
+
+
+
     // --- Akce pro Tlačítko 3, 4 (Pouze potvrdí kliknutí) ---
     const tlacitkaAkce = [
         document.getElementById('tlacitko3'),

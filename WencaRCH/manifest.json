@@ -8,7 +8,8 @@
     "contextMenus",
     "tabs",
     "scripting",
-    "activeTab"
+    "activeTab",
+    "clipboardRead"
   ],
   "action": {
     "default_popup": "popup.html",
