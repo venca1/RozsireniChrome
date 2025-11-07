@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
             // --- Akce pro Tlačítko tlacitkoUloz2 (Spustí Content Script) ---
    
-    const inputElement = document.getElementById('inputNameTabidoo');
+const inputElement = document.getElementById('inputNameTabidoo');
 
     // 1. Získání aktuální aktivní záložky
     chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
@@ -119,10 +119,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Můžeš zde nastavit placeholder, např.:
                     if (inputElement) {
                         inputElement.value = "Data nebyla nalezena";
-
-                     // inputElement.value =  document.querySelector('.form-control').value.trim();// to mi nefunguje
-
-
                     }
                 }
             });

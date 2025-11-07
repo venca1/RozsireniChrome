@@ -7,18 +7,12 @@
  */
 function getTextFromAAA() {
     // Použijeme querySelector pro nalezení prvního elementu s třídou 'aaa'
-    const element = document.querySelector('.form-control');
-
-   // const nazev = document.querySelector('.form-control').value; // Získání nového elementu
+    const element = document.querySelector('.tbd-modal-header');
 
     if (element) {
         // Získáme textový obsah elementu. 
         // Lze použít i .innerHTML, pokud by element obsahoval HTML tagy, které chceš zachovat.
-
-        if(element.value){
-            return element.textContent.trim();
-        }
-        return element.value.trim();
+        return element.textContent.trim();
     }
     
     // Pokud element nebyl nalezen, vrátíme prázdný řetězec nebo null
