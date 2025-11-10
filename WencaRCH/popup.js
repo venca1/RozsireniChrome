@@ -1,3 +1,7 @@
+// Konstanty pro klíče v Chrome Storage
+const TEXTAREA_KEY = 'textareaTabidooValue';
+const INPUT_KEY = 'inputNameTabidooValue'; // Pro úplnost, ukládejme i input
+
 document.getElementById('sendButtonOdeslani').addEventListener('click', () => {
     // Získání hodnot z formuláře
     const selector = document.getElementById('selectorInput').value;
@@ -54,6 +58,35 @@ document.addEventListener('DOMContentLoaded', function() {
     const tlacitkaZalozek = document.querySelectorAll('.zalozka-tlacitko');
     const obsahZalozek = document.querySelectorAll('.zalozka-obsah');
     const potvrzeniElement = document.getElementById('potvrzeni');
+    const inputNameTabidoo = document.getElementById('inputNameTabidoo');
+    const textareaTabidoo = document.getElementById('textareaTabidoo');
+
+
+    // --- Inicializace: Načtení uložených hodnot ---
+    chrome.storage.local.get([TEXTAREA_KEY, INPUT_KEY], function(data) {
+        if (data[TEXTAREA_KEY] && textareaTabidoo) {
+            textareaTabidoo.value = data[TEXTAREA_KEY];
+        }
+        if (data[INPUT_KEY] && inputNameTabidoo) {
+             // Nastavíme hodnotu pouze pokud se ji nepodařilo vyplnit z content.js (viz níže)
+             // Prozatím to necháme, ať to nepřepisuje data z content.js, ale jen inicializuje
+             // Ponecháme načítání v obsluze content.js níže, kde se snažíme získat data ze stránky.
+             // console.log("Načtena hodnota z inputu ze Storage (pro info):", data[INPUT_KEY]);
+        }
+    });
+
+    // --- Ukládání hodnot při změně ---
+    if (textareaTabidoo) {
+        textareaTabidoo.addEventListener('input', function() {
+            chrome.storage.local.set({ [TEXTAREA_KEY]: this.value });
+        });
+    }
+    if (inputNameTabidoo) {
+        inputNameTabidoo.addEventListener('input', function() {
+            chrome.storage.local.set({ [INPUT_KEY]: this.value });
+        });
+    }
+
 
     // --- Funkce pro Přepínání Záložek ---
     tlacitkaZalozek.forEach(tlacitko => {
@@ -99,8 +132,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const tlacitko2 = document.getElementById('tlacitko2');
     if (tlacitko2) {
         tlacitko2.addEventListener('click', function() {
-            //  potvrzeniElement.textContent = `Aktivována funkce pro Tlačítko 2: Mění vel2.`;
-
             // Používáme chrome.scripting.executeScript pro spuštění zmenaVelikostTabodoo.js
             chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
                 const activeTab = tabs[0];
@@ -120,7 +151,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-    // --- Akce pro Tlačítko tlacitkoUloz2 (Spustí Content Script) ---
+    // --- Akce pro Tlačítko tlacitkoUloz2 (Spustí Content Script a Odešle Data) ---
     const tlacitkoUloz2 = document.getElementById('tlacitkoUloz2');
     if (tlacitkoUloz2) {
         tlacitkoUloz2.addEventListener('click', function() {
@@ -149,21 +180,27 @@ document.addEventListener('DOMContentLoaded', function() {
                             logrozsireni: textareaTabidoo
                         }, (response) => {
                             if (chrome.runtime.lastError) {
-                                // Zpracování chyby, např. pokud content script neodpoví nebo dojde k chybě připojení
                                 return reject(new Error('Chyba při komunikaci se skriptem (runtime error): ' + chrome.runtime.lastError.message));
                             }
                             if (response && response.status === 'success') {
-                                resolve();
+                                resolve(response); // Předáme odpověď pro následné vymazání
                             } else {
-                                // Zpracování chyby, kterou vrátil content script
                                 reject(new Error(`Odeslání dat selhalo (skript): ${response ? response.message : 'Neznámá chyba.'}`));
                             }
                         });
                     });
                 })
-                .then(() => {
+                .then((response) => {
                     console.log("Spuštění Uložení 2 skriptu a odeslání dat úspěšné.");
                     potvrzeniElement.innerHTML = "Spuštění Uložení 2 skriptu a odeslání dat **úspěšné**."
+                    
+                    // *** NOVÁ LOGIKA: VYMAZÁNÍ HODNOTY PO ÚSPĚŠNÉM ODESLÁNÍ ***
+                    document.getElementById('textareaTabidoo').value = '';
+                    chrome.storage.local.remove(TEXTAREA_KEY, () => {
+                         console.log("Hodnota textarea byla po úspěšném odeslání vymazána ze Storage.");
+                    });
+                    // *** KONEC NOVÉ LOGIKY ***
+
                 })
                 .catch(err => {
                     console.error("Chyba při spouštění skriptu z popup:", err);
@@ -173,10 +210,8 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-             // --- Načtení dat při otevření Popupu ---
+    // --- Načtení dat při otevření Popupu ---
     
-const inputElement = document.getElementById('inputNameTabidoo');
-
     // 1. Získání aktuální aktivní záložky
     chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
         const activeTab = tabs[0];
@@ -191,15 +226,21 @@ const inputElement = document.getElementById('inputNameTabidoo');
                     const textFromAAA = results[0].result;
                     
                     // 3. Vyplnění inputu získaným textem
-                    if (inputElement) {
-                        inputElement.value = textFromAAA;
+                    if (inputNameTabidoo) {
+                        inputNameTabidoo.value = textFromAAA;
+                        chrome.storage.local.set({ [INPUT_KEY]: textFromAAA }); // Uložíme i novou hodnotu
                     }
                 } else {
-                    console.log("Nepodařilo se získat data ze stránky nebo element 'aaa' nebyl nalezen.");
-                    // Můžeš zde nastavit placeholder, např.:
-                    if (inputElement) {
-                        inputElement.value = "Data nebyla nalezena";
-                    }
+                    console.log("Nepodařilo se získat data ze stránky nebo element 'aaa' nebyl nalezen. Načítám ze Storage.");
+                    
+                    // Pokud se nepodařilo získat data ze stránky, použijeme uloženou hodnotu
+                    chrome.storage.local.get(INPUT_KEY, function(data) {
+                        if (data[INPUT_KEY] && inputNameTabidoo) {
+                            inputNameTabidoo.value = data[INPUT_KEY];
+                        } else if (inputNameTabidoo) {
+                             inputNameTabidoo.value = "Data nebyla nalezena";
+                        }
+                    });
                 }
             });
         }
