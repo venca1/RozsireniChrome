@@ -1,6 +1,3 @@
-
-
-
 document.getElementById('sendButtonOdeslani').addEventListener('click', () => {
     // Získání hodnot z formuláře
     const selector = document.getElementById('selectorInput').value;
@@ -41,17 +38,16 @@ document.getElementById('sendButtonOdeslani').addEventListener('click', () => {
                  }
                  
                  if (response && response.status === 'success') {
-                     statusMessage.textContent = `Úspěch! Odesláno: ${response.data.text.substring(0, 30)}...`;
-                     statusMessage.style.color = 'green';
+                      statusMessage.textContent = `Úspěch! Odesláno: ${response.data.text.substring(0, 30)}...`;
+                      statusMessage.style.color = 'green';
                  } else {
-                     statusMessage.textContent = `Chyba při odeslání: ${response.message}`;
-                     statusMessage.style.color = 'red';
+                      statusMessage.textContent = `Chyba při odeslání: ${response.message}`;
+                      statusMessage.style.color = 'red';
                  }
              });
         });
     });
 });
-
 
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -103,13 +99,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const tlacitko2 = document.getElementById('tlacitko2');
     if (tlacitko2) {
         tlacitko2.addEventListener('click', function() {
-          //  potvrzeniElement.textContent = `Aktivována funkce pro Tlačítko 2: Mění vel2.`;
+            //  potvrzeniElement.textContent = `Aktivována funkce pro Tlačítko 2: Mění vel2.`;
 
             // Používáme chrome.scripting.executeScript pro spuštění zmenaVelikostTabodoo.js
             chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
                 const activeTab = tabs[0];
                 
-               chrome.scripting.executeScript({
+                chrome.scripting.executeScript({
                     target: { tabId: activeTab.id },
                     files: ['ulozTabodoo.js'] 
                 })
@@ -124,33 +120,61 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-        // --- Akce pro Tlačítko tlacitkoUloz2 (Spustí Content Script) ---
+    // --- Akce pro Tlačítko tlacitkoUloz2 (Spustí Content Script) ---
     const tlacitkoUloz2 = document.getElementById('tlacitkoUloz2');
     if (tlacitkoUloz2) {
         tlacitkoUloz2.addEventListener('click', function() {
-          //  potvrzeniElement.textContent = `Aktivována funkce pro Tlačítko 2: Mění vel2.`;
+             // 1. Získání hodnot z input/textarea
+            const inputNameTabidoo = document.getElementById('inputNameTabidoo').value;
+            const textareaTabidoo = document.getElementById('textareaTabidoo').value;
 
-            // Používáme chrome.scripting.executeScript pro spuštění zmenaVelikostTabodoo.js
+            potvrzeniElement.textContent = `Příprava na odeslání dat...`;
+
+
+             // Používáme chrome.scripting.executeScript pro spuštění ulozTabodoo2.js a PŘEDÁNÍ DAT
             chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
                 const activeTab = tabs[0];
                 
-               chrome.scripting.executeScript({
+                // 1. Spustíme SOUBOR ulozTabodoo2.js.
+                chrome.scripting.executeScript({
                     target: { tabId: activeTab.id },
                     files: ['ulozTabodoo2.js'] 
                 })
-                .then(() => {console.log("Spuštění Uložení skriptu úspěšné.");
-            potvrzeniElement.innerHTML = "Spuštění Uložení skriptu úspěšné."
-        })
+                .then(() => {
+                    // 2. Po úspěšném spuštění souboru odešleme data pomocí MESSAGE PASSING
+                    return new Promise((resolve, reject) => {
+                        chrome.tabs.sendMessage(activeTab.id, {
+                            action: 'ulozTabidoo2',
+                            nazev: inputNameTabidoo,
+                            logrozsireni: textareaTabidoo
+                        }, (response) => {
+                            if (chrome.runtime.lastError) {
+                                // Zpracování chyby, např. pokud content script neodpoví nebo dojde k chybě připojení
+                                return reject(new Error('Chyba při komunikaci se skriptem (runtime error): ' + chrome.runtime.lastError.message));
+                            }
+                            if (response && response.status === 'success') {
+                                resolve();
+                            } else {
+                                // Zpracování chyby, kterou vrátil content script
+                                reject(new Error(`Odeslání dat selhalo (skript): ${response ? response.message : 'Neznámá chyba.'}`));
+                            }
+                        });
+                    });
+                })
+                .then(() => {
+                    console.log("Spuštění Uložení 2 skriptu a odeslání dat úspěšné.");
+                    potvrzeniElement.innerHTML = "Spuštění Uložení 2 skriptu a odeslání dat **úspěšné**."
+                })
                 .catch(err => {
                     console.error("Chyba při spouštění skriptu z popup:", err);
-                    potvrzeniElement.innerHTML = "Chyba při Spuštění Uložení!"
+                    potvrzeniElement.innerHTML = `Chyba při Spuštění Uložení 2: **${err.message}**`
                 });
 
             });
         });
     }
-            // --- Akce pro Tlačítko tlacitkoUloz2 (Spustí Content Script) ---
-   
+             // --- Načtení dat při otevření Popupu ---
+    
 const inputElement = document.getElementById('inputNameTabidoo');
 
     // 1. Získání aktuální aktivní záložky
@@ -180,8 +204,6 @@ const inputElement = document.getElementById('inputNameTabidoo');
             });
         }
     });
-
-
 
 
     // --- Akce pro Tlačítko 3, 4 (Pouze potvrdí kliknutí) ---
