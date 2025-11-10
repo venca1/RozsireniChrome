@@ -1,3 +1,59 @@
+
+
+
+document.getElementById('sendButtonOdeslani').addEventListener('click', () => {
+    // Získání hodnot z formuláře
+    const selector = document.getElementById('selectorInput').value;
+    const url = document.getElementById('urlInput').value;
+    const statusMessage = document.getElementById('statusMessage');
+    
+    // Rychlá validace
+    if (!selector || !url) {
+        statusMessage.textContent = 'Chyba: Vyplňte selektor i URL!';
+        statusMessage.style.color = 'red';
+        return;
+    }
+    
+    statusMessage.textContent = 'Odesílám...';
+    statusMessage.style.color = 'orange';
+
+    // Získání aktivní záložky a spuštění skriptu
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        const activeTab = tabs[0];
+        
+        // Spuštění 'content.js' s předanými argumenty
+        chrome.scripting.executeScript({
+            target: { tabId: activeTab.id },
+            files: ['content.js']
+        }, () => {
+             // Po vložení content skriptu (nebo při jeho existenci)
+             // odešleme zprávu s daty pro zpracování
+             chrome.tabs.sendMessage(activeTab.id, {
+                 action: 'processElement',
+                 selector: selector,
+                 url: url
+             }, (response) => {
+                 // Zpracování odpovědi z 'content.js'
+                 if (chrome.runtime.lastError) {
+                      statusMessage.textContent = 'Chyba: Nelze komunikovat se stránkou.';
+                      statusMessage.style.color = 'red';
+                      return;
+                 }
+                 
+                 if (response && response.status === 'success') {
+                     statusMessage.textContent = `Úspěch! Odesláno: ${response.data.text.substring(0, 30)}...`;
+                     statusMessage.style.color = 'green';
+                 } else {
+                     statusMessage.textContent = `Chyba při odeslání: ${response.message}`;
+                     statusMessage.style.color = 'red';
+                 }
+             });
+        });
+    });
+});
+
+
+
 document.addEventListener('DOMContentLoaded', function() {
     const tlacitkaZalozek = document.querySelectorAll('.zalozka-tlacitko');
     const obsahZalozek = document.querySelectorAll('.zalozka-obsah');

@@ -10,6 +10,7 @@
     <div class="zalozky">
         <button class="zalozka-tlacitko" data-zalozka="zalozka1">Tabidoo</button>
         <button class="zalozka-tlacitko" data-zalozka="zalozka2">Záložka 2</button>
+        <button class="zalozka-tlacitko" data-zalozka="odeslani">Odeslání</button>
     </div>
 
     <div id="zalozka1" class="zalozka-obsah aktivni">
@@ -31,6 +32,25 @@
         <button id="tlacitko3">Tlačítko 3</button>
         <button id="tlacitko4">Tlačítko 4</button>
     </div>
+
+        <div id="odeslani" class="zalozka-obsah">
+        <h3>Odeslání</h3>
+
+        <h1>Nastavení odeslání</h1>
+    <label for="selectorInput">ID nebo Class (např. `#mojeid` nebo `.mujclass`):</label>
+    <input type="text" id="selectorInput" placeholder="Zadejte selektor">
+    
+    <label for="urlInput">Cílová URL pro POST:</label>
+    <input type="text" id="urlInput" placeholder="https://tvojeapi.com/endpoint">
+    
+    <button id="sendButtonOdeslani">Odeslat Data Prvku</button>
+    
+    <p id="statusMessage" style="color: green; font-weight: bold;"></p>
+
+
+        
+    </div>
+
 
     <p id="potvrzeni">Zatím nebylo kliknuto.</p>
 
