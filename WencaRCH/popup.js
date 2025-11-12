@@ -7,6 +7,8 @@ const INPUT_VELTABIDOO = 'velikostTabidooValue'; // Pro úplnost, ukládejme i i
 
 
 document.getElementById('sendButtonOdeslani').addEventListener('click', () => {
+    const sendButtonOdeslani = document.getElementById('sendButtonOdeslani');
+    sendButtonOdeslani.disabled = true; // Disable the button immediately
     // Získání hodnot z formuláře
     const selector = document.getElementById('selectorInput').value;
     const url = document.getElementById('urlInput').value;
@@ -16,6 +18,7 @@ document.getElementById('sendButtonOdeslani').addEventListener('click', () => {
     if (!selector || !url) {
         statusMessage.textContent = 'Chyba: Vyplňte selektor i URL!';
         statusMessage.style.color = 'red';
+        sendButtonOdeslani.disabled = false; // Re-enable the button on validation failure
         return;
     }
     
@@ -42,6 +45,7 @@ document.getElementById('sendButtonOdeslani').addEventListener('click', () => {
                  if (chrome.runtime.lastError) {
                       statusMessage.textContent = 'Chyba: Nelze komunikovat se stránkou.';
                       statusMessage.style.color = 'red';
+                      sendButtonOdeslani.disabled = false; // Re-enable the button on error
                       return;
                  }
                  
@@ -52,6 +56,7 @@ document.getElementById('sendButtonOdeslani').addEventListener('click', () => {
                       statusMessage.textContent = `Chyba při odeslání: ${response.message}`;
                       statusMessage.style.color = 'red';
                  }
+                 sendButtonOdeslani.disabled = false; // Re-enable the button after completion
              });
         });
     });
@@ -172,6 +177,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const tlacitkoUlozWa = document.getElementById('tlacitkoUlozWa');
     if (tlacitkoUlozWa) {
         tlacitkoUlozWa.addEventListener('click', function() {
+            tlacitkoUlozWa.disabled = true; // Disable the button immediately
              // 1. Získání hodnot z input/textarea
             const inputNameTabidoo = document.getElementById('inputNameTabidoo').value;
             const textareaTabidoo = document.getElementById('textareaTabidoo').value;
@@ -217,11 +223,13 @@ document.addEventListener('DOMContentLoaded', function() {
                          console.log("Hodnota textarea byla po úspěšném odeslání vymazána ze Storage.");
                     });
                     // *** KONEC NOVÉ LOGIKY ***
-
                 })
                 .catch(err => {
                     console.error("Chyba při spouštění skriptu z popup:", err);
                     potvrzeniElement.innerHTML = `Chyba při Spuštění Uložení 2: **${err.message}**`
+                })
+                .finally(() => {
+                    tlacitkoUlozWa.disabled = false; // Re-enable the button
                 });
 
             });
@@ -231,6 +239,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const tlacitkoUloz2 = document.getElementById('tlacitkoUloz2');
     if (tlacitkoUloz2) {
         tlacitkoUloz2.addEventListener('click', function() {
+            tlacitkoUloz2.disabled = true; // Disable the button immediately
              // 1. Získání hodnot z input/textarea
             const inputNameTabidoo = document.getElementById('inputNameTabidoo').value;
             const textareaTabidoo = document.getElementById('textareaTabidoo').value;
@@ -281,6 +290,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 .catch(err => {
                     console.error("Chyba při spouštění skriptu z popup:", err);
                     potvrzeniElement.innerHTML = `Chyba při Spuštění Uložení 2: **${err.message}**`
+                })
+                .finally(() => {
+                    tlacitkoUloz2.disabled = false; // Re-enable the button
                 });
 
             });
@@ -326,6 +338,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+
+    const zavritTlacitko = document.getElementById('zavrit');
+    if (zavritTlacitko) {
+        zavritTlacitko.addEventListener('click', function() {
+            window.close();
+        });
+    }
 
     // --- Akce pro Tlačítko 3, 4 (Pouze potvrdí kliknutí) ---
     const tlacitkaAkce = [

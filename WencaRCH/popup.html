@@ -1,51 +1,52 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <title>Rozšíření</title>
     <link rel="stylesheet" href="popup.css">
 </head>
+
 <body>
 
     <div class="zalozky">
         <button class="zalozka-tlacitko" data-zalozka="zalozka1">Tabidoo</button>
         <button class="zalozka-tlacitko" data-zalozka="zalozka2">Záložka 2</button>
         <button class="zalozka-tlacitko" data-zalozka="odeslani">Odeslání</button>
+        <button id="zavrit">Zavřít</button>
     </div>
 
     <div id="zalozka1" class="zalozka-obsah aktivni">
         <h3>Tabidoo</h3>
-<button id="tlacitko1">Velikost</button><input id="velikostTabidoo">
-        
-    <div class="zalozky">
-        <button class="zalozka-tlacitkot" data-zalozka="zalozka1t">Ulož zálohu</button>
-        <button class="zalozka-tlacitkot" data-zalozka="zalozka2t">t2</button>
-        <button class="zalozka-tlacitkot" data-zalozka="zalozka3t">T3</button>
-    </div>
+        <button id="tlacitko1">Velikost</button><input id="velikostTabidoo">
+
+        <div class="zalozky">
+            <button class="zalozka-tlacitkot" data-zalozka="zalozka1t">Ulož zálohu</button>
+            <button class="zalozka-tlacitkot" data-zalozka="zalozka2t">t2</button>
+            <button class="zalozka-tlacitkot" data-zalozka="zalozka3t">T3</button>
+        </div>
 
 
         <div id="zalozka1t" class="zalozka-obsaht aktivnit">
-        <h3>t1</h3>
-        <div>
-        
-        <button id="tlacitkoUlozWa">Ulož WA</button>
-        <button id="tlacitkoUloz2">Test</button>
+            <div>
+                <button id="tlacitkoUlozWa">Ulož WA</button>
+                <button id="tlacitkoUloz2">Test</button>
+            </div>
+            <div>
+                <input id="inputNameTabidoo">
+                <br>
+                <textarea id="textareaTabidoo" rows="5"></textarea>
+            </div>
         </div>
-        <div>
-            <input id="inputNameTabidoo">
-            <br>
-            <textarea id="textareaTabidoo" rows="5"></textarea>
-        </div>
-    </div>
     </div>
 
-        <div id="zalozka2t" class="zalozka-obsaht">
+    <div id="zalozka2t" class="zalozka-obsaht">
         <h3>t2</h3>
         <button id="tlacitko3t">Tlačítko 3</button>
         <button id="tlacitko4t">Tlačítko 4</button>
     </div>
 
-        <div id="zalozka3t" class="zalozka-obsaht">
+    <div id="zalozka3t" class="zalozka-obsaht">
         <h3>t3</h3>
         <button id="tlacitko5t">Tlačítko 5</button>
         <button id="tlacitko6t">Tlačítko 6</button>
@@ -60,22 +61,22 @@
         <button id="tlacitko4">Tlačítko 4</button>
     </div>
 
-        <div id="odeslani" class="zalozka-obsah">
+    <div id="odeslani" class="zalozka-obsah">
         <h3>Odeslání</h3>
 
         <h1>Nastavení odeslání</h1>
-    <label for="selectorInput">ID nebo Class (např. `#mojeid` nebo `.mujclass`):</label>
-    <input type="text" id="selectorInput" placeholder="Zadejte selektor">
-    
-    <label for="urlInput">Cílová URL pro POST:</label>
-    <input type="text" id="urlInput" placeholder="https://tvojeapi.com/endpoint">
-    
-    <button id="sendButtonOdeslani">Odeslat Data Prvku</button>
-    
-    <p id="statusMessage" style="color: green; font-weight: bold;"></p>
+        <label for="selectorInput">ID nebo Class (např. `#mojeid` nebo `.mujclass`):</label>
+        <input type="text" id="selectorInput" placeholder="Zadejte selektor">
+
+        <label for="urlInput">Cílová URL pro POST:</label>
+        <input type="text" id="urlInput" placeholder="https://tvojeapi.com/endpoint">
+
+        <button id="sendButtonOdeslani">Odeslat Data Prvku</button>
+
+        <p id="statusMessage" style="color: green; font-weight: bold;"></p>
 
 
-        
+
     </div>
 
 
@@ -83,4 +84,5 @@
 
     <script src="popup.js"></script>
 </body>
+
 </html>
