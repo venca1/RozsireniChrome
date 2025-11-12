@@ -1,6 +1,28 @@
 // contentScript.js - ulozTabodoo2.js
 // Spouští se v kontextu webové stránky
 
+// --- Ochrana před vícenásobnou registrací posluchače ---
+// Kontrolujeme, zda posluchač již nebyl registrován v tomto kontextu (na této stránce).
+if (typeof window.hasMessageListener_ulozTabodooWs === 'undefined') {
+    window.hasMessageListener_ulozTabodooWs = true; // Nastavíme příznak
+
+    // Posluchač zpráv pro příjem dat z popup.js
+    chrome.runtime.onMessage.addListener(
+        function(request, sender, sendResponse) {
+            // Kontrola, zda se jedná o správnou akci
+            if (request.action === "ulozTabidooWs") {
+                // Asynchronní volání funkce a předání dat
+                procesTabidooData(request.nazev, request.textareaTabidooWa)
+                    .then(sendResponse);
+                
+                // Důležité: Návrat hodnoty 'true' dává Chromu vědět, že 
+                // 'sendResponse' bude zavolán asynchronně.
+                return true; 
+            }
+        }
+    );
+}
+
 // Funkce, která provede veškerou logiku: sběr dat ze stránky a POST požadavek.
 // Přijímá data (nazev, textareaTabidooWa) z popupu.
 function procesTabidooData(nazev, textareaTabidooWa) {
@@ -67,20 +89,3 @@ function procesTabidooData(nazev, textareaTabidooWa) {
         return Promise.resolve({ status: 'error', message: 'Text k odeslání je prázdný.' });
     }
 }
-
-
-// Posluchač zpráv pro příjem dat z popup.js
-chrome.runtime.onMessage.addListener(
-    function(request, sender, sendResponse) {
-        // Kontrola, zda se jedná o správnou akci
-        if (request.action === "ulozTabidooWs") {
-            // Asynchronní volání funkce a předání dat
-            procesTabidooData(request.nazev, request.textareaTabidooWa)
-                .then(sendResponse);
-            
-            // Důležité: Návrat hodnoty 'true' dává Chromu vědět, že 
-            // 'sendResponse' bude zavolán asynchronně.
-            return true; 
-        }
-    }
-);
