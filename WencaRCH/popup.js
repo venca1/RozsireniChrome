@@ -57,6 +57,10 @@ document.getElementById('sendButtonOdeslani').addEventListener('click', () => {
 document.addEventListener('DOMContentLoaded', function() {
     const tlacitkaZalozek = document.querySelectorAll('.zalozka-tlacitko');
     const obsahZalozek = document.querySelectorAll('.zalozka-obsah');
+    const tlacitkaZalozekt = document.querySelectorAll('.zalozka-tlacitkot');
+    const obsahZalozekt = document.querySelectorAll('.zalozka-obsaht');
+
+
     const potvrzeniElement = document.getElementById('potvrzeni');
     const inputNameTabidoo = document.getElementById('inputNameTabidoo');
     const textareaTabidoo = document.getElementById('textareaTabidoo');
@@ -107,6 +111,28 @@ document.addEventListener('DOMContentLoaded', function() {
     if (tlacitkaZalozek.length > 0) {
         tlacitkaZalozek[0].classList.add('aktivni');
     }
+
+
+        // --- Funkce pro Přepínání Záložek ---
+    tlacitkaZalozekt.forEach(tlacitko => {
+        tlacitko.addEventListener('click', function() {
+            const cilovaZalozkaId = this.dataset.zalozka;
+
+            // Skrýt veškerý obsah a zrušit aktivní stav
+            obsahZalozekt.forEach(obsah => obsah.classList.remove('aktivnit'));
+            tlacitkaZalozekt.forEach(btn => btn.classList.remove('aktivnit'));
+
+            // Zobrazit cílovou záložku a nastavit aktivní stav
+            document.getElementById(cilovaZalozkaId).classList.add('aktivnit');
+            this.classList.add('aktivnit');
+        });
+    });
+
+    // Nastavení první záložky jako aktivní při startu
+    if (tlacitkaZalozekt.length > 0) {
+        tlacitkaZalozekt[0].classList.add('aktivnit');
+    }
+
 
 
     // --- Akce pro Tlačítko 1 (Spustí Content Script) ---
