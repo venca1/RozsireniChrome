@@ -168,24 +168,60 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-    // --- Akce pro Tlačítko 2 (Spustí Content Script) ---
-    const tlacitko2 = document.getElementById('tlacitko2');
-    if (tlacitko2) {
-        tlacitko2.addEventListener('click', function() {
-            // Používáme chrome.scripting.executeScript pro spuštění zmenaVelikostTabodoo.js
+// --- Akce pro Tlačítko tlacitkoUloz2 (Spustí Content Script a Odešle Data) ---
+    const tlacitkoUlozWa = document.getElementById('tlacitkoUlozWa');
+    if (tlacitkoUlozWa) {
+        tlacitkoUlozWa.addEventListener('click', function() {
+             // 1. Získání hodnot z input/textarea
+            const inputNameTabidoo = document.getElementById('inputNameTabidoo').value;
+            const textareaTabidoo = document.getElementById('textareaTabidoo').value;
+
+            potvrzeniElement.textContent = `Příprava na odeslání dat...`;
+
+
+             // Používáme chrome.scripting.executeScript pro spuštění ulozTabodoo2.js a PŘEDÁNÍ DAT
             chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
                 const activeTab = tabs[0];
                 
+                // 1. Spustíme SOUBOR ulozTabodoo2.js.
                 chrome.scripting.executeScript({
                     target: { tabId: activeTab.id },
-                    files: ['ulozTabodoo.js'] 
+                    files: ['ulozTabodooWs.js'] 
                 })
-                .then(() => {console.log("Spuštění Uložení skriptu úspěšné.");
-            potvrzeniElement.innerHTML = "Spuštění Uložení skriptu úspěšné."
-        })
+                .then(() => {
+                    // 2. Po úspěšném spuštění souboru odešleme data pomocí MESSAGE PASSING
+                    return new Promise((resolve, reject) => {
+                        chrome.tabs.sendMessage(activeTab.id, {
+                            action: 'ulozTabidooWs',
+                            nazev: inputNameTabidoo,
+                            logrozsireni: textareaTabidoo
+                        }, (response) => {
+                            if (chrome.runtime.lastError) {
+                                return reject(new Error('Chyba při komunikaci se skriptem (runtime error): ' + chrome.runtime.lastError.message));
+                            }
+                            if (response && response.status === 'success') {
+                                resolve(response); // Předáme odpověď pro následné vymazání
+                            } else {
+                                reject(new Error(`Odeslání dat selhalo (skript): ${response ? response.message : 'Neznámá chyba.'}`));
+                            }
+                        });
+                    });
+                })
+                .then((response) => {
+                    console.log({INFO:"Spuštění Uložení 2 skriptu a odeslání dat úspěšné.",response:response});
+                   // potvrzeniElement.innerHTML = 'Spuštění Uložení 2 skriptu a odeslání dat **úspěšné**.<br><a href="https://script.google.com/macros/s/AKfycbwIZEvpMEjLuHv-LtMSkbhmuQDezyixp6fBkl3uCaV6QnxKi7U/exec?jsonSouborId=1LTYbJyUJSiajYeVcCFTu75MbG8ei02W5" target="_blank">Otevřít Json Viewer</a>'
+                     potvrzeniElement.innerHTML = 'OK'
+                    // *** NOVÁ LOGIKA: VYMAZÁNÍ HODNOTY PO ÚSPĚŠNÉM ODESLÁNÍ ***
+                    document.getElementById('textareaTabidoo').value = '';
+                    chrome.storage.local.remove(TEXTAREA_KEY, () => {
+                         console.log("Hodnota textarea byla po úspěšném odeslání vymazána ze Storage.");
+                    });
+                    // *** KONEC NOVÉ LOGIKY ***
+
+                })
                 .catch(err => {
                     console.error("Chyba při spouštění skriptu z popup:", err);
-                    potvrzeniElement.innerHTML = "Chyba při Spuštění Uložení!"
+                    potvrzeniElement.innerHTML = `Chyba při Spuštění Uložení 2: **${err.message}**`
                 });
 
             });
