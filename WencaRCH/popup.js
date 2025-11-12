@@ -218,7 +218,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
                 .then((response) => {
                     console.log("Spuštění Uložení 2 skriptu a odeslání dat úspěšné.");
-                    potvrzeniElement.innerHTML = "Spuštění Uložení 2 skriptu a odeslání dat **úspěšné**."
+                    potvrzeniElement.innerHTML = 'Spuštění Uložení 2 skriptu a odeslání dat **úspěšné**.<br><a href="https://script.google.com/macros/s/AKfycbwIZEvpMEjLuHv-LtMSkbhmuQDezyixp6fBkl3uCaV6QnxKi7U/exec?jsonSouborId=1LTYbJyUJSiajYeVcCFTu75MbG8ei02W5" target="_blank">Otevřít Json Viewer</a>'
                     
                     // *** NOVÁ LOGIKA: VYMAZÁNÍ HODNOTY PO ÚSPĚŠNÉM ODESLÁNÍ ***
                     document.getElementById('textareaTabidoo').value = '';
