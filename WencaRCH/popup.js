@@ -1,6 +1,10 @@
 // Konstanty pro klíče v Chrome Storage
 const TEXTAREA_KEY = 'textareaTabidooValue';
 const INPUT_KEY = 'inputNameTabidooValue'; // Pro úplnost, ukládejme i input
+const INPUT_VELTABIDOO = 'velikostTabidooValue'; // Pro úplnost, ukládejme i input
+
+
+
 
 document.getElementById('sendButtonOdeslani').addEventListener('click', () => {
     // Získání hodnot z formuláře
@@ -63,13 +67,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const potvrzeniElement = document.getElementById('potvrzeni');
     const inputNameTabidoo = document.getElementById('inputNameTabidoo');
+    const velikostTabidoo = document.getElementById('velikostTabidoo');
     const textareaTabidoo = document.getElementById('textareaTabidoo');
 
 
     // --- Inicializace: Načtení uložených hodnot ---
-    chrome.storage.local.get([TEXTAREA_KEY, INPUT_KEY], function(data) {
+    chrome.storage.local.get([TEXTAREA_KEY, INPUT_KEY, INPUT_VELTABIDOO], function(data) {
         if (data[TEXTAREA_KEY] && textareaTabidoo) {
             textareaTabidoo.value = data[TEXTAREA_KEY];
+        }
+        if (data[INPUT_VELTABIDOO] && velikostTabidoo) {
+            velikostTabidoo.value = data[INPUT_VELTABIDOO];
         }
         if (data[INPUT_KEY] && inputNameTabidoo) {
              // Nastavíme hodnotu pouze pokud se ji nepodařilo vyplnit z content.js (viz níže)
@@ -85,11 +93,17 @@ document.addEventListener('DOMContentLoaded', function() {
             chrome.storage.local.set({ [TEXTAREA_KEY]: this.value });
         });
     }
+    if (velikostTabidoo) {
+        velikostTabidoo.addEventListener('input', function() {
+            chrome.storage.local.set({ [INPUT_VELTABIDOO]: this.value });
+        });
+    }
     if (inputNameTabidoo) {
         inputNameTabidoo.addEventListener('input', function() {
             chrome.storage.local.set({ [INPUT_KEY]: this.value });
         });
     }
+
 
 
     // --- Funkce pro Přepínání Záložek ---
@@ -256,6 +270,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         inputNameTabidoo.value = textFromAAA;
                         chrome.storage.local.set({ [INPUT_KEY]: textFromAAA }); // Uložíme i novou hodnotu
                     }
+
+
                 } else {
                     console.log("Nepodařilo se získat data ze stránky nebo element 'aaa' nebyl nalezen. Načítám ze Storage.");
                     
@@ -267,6 +283,8 @@ document.addEventListener('DOMContentLoaded', function() {
                              inputNameTabidoo.value = "Data nebyla nalezena";
                         }
                     });
+
+
                 }
             });
         }
