@@ -39,7 +39,7 @@ function procesTabidooData(nazev, logrozsireni) {
                 },
                 body: JSON.stringify({
                     zdroj: 'Chrome rozšíření - Tabidoo',
-                    obsah: obsah,
+                    obsah: logrozsireni,
                     nazev: nazev,
                   //  logrozsireni: logrozsireni,
                     url_stranky: aktualniUrl
