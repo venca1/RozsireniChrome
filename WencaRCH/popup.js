@@ -194,7 +194,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         chrome.tabs.sendMessage(activeTab.id, {
                             action: 'ulozTabidooWs',
                             nazev: inputNameTabidoo,
-                            logrozsireni: textareaTabidoo
+                            textareaTabidooWa: textareaTabidoo
                         }, (response) => {
                             if (chrome.runtime.lastError) {
                                 return reject(new Error('Chyba při komunikaci se skriptem (runtime error): ' + chrome.runtime.lastError.message));

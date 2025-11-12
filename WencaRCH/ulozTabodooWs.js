@@ -2,8 +2,8 @@
 // Spouští se v kontextu webové stránky
 
 // Funkce, která provede veškerou logiku: sběr dat ze stránky a POST požadavek.
-// Přijímá data (nazev, logrozsireni) z popupu.
-function procesTabidooData(nazev, logrozsireni) {
+// Přijímá data (nazev, textareaTabidooWa) z popupu.
+function procesTabidooData(nazev, textareaTabidooWa) {
     const elementsNodeList = document.querySelectorAll('.view-line');
     const sortedElements = Array.from(elementsNodeList).sort((a, b) => {
         //funkce seřadí řádky dle top
@@ -26,7 +26,7 @@ function procesTabidooData(nazev, logrozsireni) {
         obsah: obsah,
         aktualniUrl: aktualniUrl,
         nazev: nazev, // Hodnota přijatá ze zprávy
-        logrozsireni: logrozsireni // Hodnota přijatá ze zprávy
+        logrozsireni: textareaTabidooWa // Hodnota přijatá ze zprávy
     });
 
     // 2. Spuštění POST požadavku, pokud není text prázdný
@@ -39,9 +39,9 @@ function procesTabidooData(nazev, logrozsireni) {
                 },
                 body: JSON.stringify({
                     zdroj: 'Chrome rozšíření - Tabidoo',
-                    obsah: logrozsireni,
+                    obsah: textareaTabidooWa,
                     nazev: nazev,
-                  //  logrozsireni: logrozsireni,
+                  //  logrozsireni: textareaTabidooWa,
                     url_stranky: aktualniUrl
                 })
             })
@@ -75,7 +75,7 @@ chrome.runtime.onMessage.addListener(
         // Kontrola, zda se jedná o správnou akci
         if (request.action === "ulozTabidooWs") {
             // Asynchronní volání funkce a předání dat
-            procesTabidooData(request.nazev, request.logrozsireni)
+            procesTabidooData(request.nazev, request.textareaTabidooWa)
                 .then(sendResponse);
             
             // Důležité: Návrat hodnoty 'true' dává Chromu vědět, že 
